@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+  	<head>
+
+ 	</head>
+  	<body>
+
+  		<p><script>
+  		var lists = JSON.parse(sessionStorage.myValue)
+
+  		for(var i = 0; i < lists.length; i++) {
+  			document.write("Line " + (i + 1) + ": [" + lists[i][0] + ", " + lists[i][1] + "] to [" + lists[i][2] + ", " + lists[i][3] + "]" + "<br />")
+  		}
+
+  		</script></p>
+  		<div id="container">
+  		<canvas id="myCanvas" width="563" height="272"></canvas></div>
+  		<script>
+  			var canvas = document.getElementById('myCanvas');
+     		var context = canvas.getContext('2d');
+
+	  		for(var i = 0; i < lists.length; i++) {
+	  			context.beginPath();
+	  			context.moveTo(lists[i][0], lists[i][1]); //start coords
+	  			context.lineTo(lists[i][2], lists[i][3]); //start coords
+	  			context.stroke();
+	  		}
+
+  		</script>
+	</body>
+</html>

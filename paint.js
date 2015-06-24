@@ -14,30 +14,13 @@ window.addEventListener('load', function () {
   function init () {
     // Find the canvas element.
     canvaso = document.getElementById('imageView');
-    if (!canvaso) {
-      alert('Error: I cannot find the canvas element!');
-      return;
-    }
-
-    if (!canvaso.getContext) {
-      alert('Error: no canvas.getContext!');
-      return;
-    }
 
     // Get the 2D canvas context.
     contexto = canvaso.getContext('2d');
-    if (!contexto) {
-      alert('Error: failed to getContext!');
-      return;
-    }
 
     // Add the temporary canvas.
     var container = canvaso.parentNode;
     canvas = document.createElement('canvas');
-    if (!canvas) {
-      alert('Error: I cannot create a new canvas element!');
-      return;
-    }
 
     canvas.id     = 'imageTemp';
     canvas.width  = canvaso.width;
@@ -48,16 +31,24 @@ window.addEventListener('load', function () {
 
     // Get the tool select input.
     var tool_select = document.getElementById('dtool');
-    if (!tool_select) {
-      alert('Error: failed to get the dtool element!');
-      return;
-    }
     tool_select.addEventListener('change', ev_tool_change, false);
 
     // Activate the default tool.
     if (tools[tool_default]) {
       tool = new tools[tool_default]();
       tool_select.value = tool_default;
+    }
+
+    //work with the lines button
+    var coords_select = document.getElementById('button');
+    coords_select.addEventListener('click', clickCoords, false);
+
+    function clickCoords(ev) {
+      sessionStorage.myValue = JSON.stringify(lines)
+      window.open("file:///Users/Angela/spe/lists.html")
+  //for (var i = 0; i < lists.length; i++) {
+    // console.log(lists[i]);
+     // }
     }
 
     // Attach the mousedown, mousemove and mouseup event listeners.
@@ -102,16 +93,25 @@ window.addEventListener('load', function () {
   // This object holds the implementation of each drawing tool.
   var tools = {};
 
+  var lines =[];
 
   // The line tool.
   tools.line = function () {
     var tool = this;
     this.started = false;
 
+    var start_x = 0;
+    var start_y = 0;
+    var end_x = 0;
+    var end_y = 0;
+
     this.mousedown = function (ev) {
       tool.started = true;
       tool.x0 = ev._x;
       tool.y0 = ev._y;
+      //////save start coordinates
+      start_x = ev._x;
+      start_y = ev._y;
     };
 
     this.mousemove = function (ev) {
@@ -131,8 +131,12 @@ window.addEventListener('load', function () {
     this.mouseup = function (ev) {
       if (tool.started) {
         tool.mousemove(ev);
+        end_x = ev._x; //save end coords
+        end_y = ev._y; //save end coords
         tool.started = false;
         img_update();
+        //////append new line to list of lists
+        lines.push([start_x, start_y, end_x, end_y])
       }
     };
   };
