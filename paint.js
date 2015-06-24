@@ -45,7 +45,7 @@ window.addEventListener('load', function () {
 
     function clickCoords(ev) {
       sessionStorage.myValue = JSON.stringify(lines)
-      window.open("file:///Users/Angela/spe/lists.html")
+      window.open("file:///Users/Angela/spe/lists.html") //change to own directory
   //for (var i = 0; i < lists.length; i++) {
     // console.log(lists[i]);
      // }
