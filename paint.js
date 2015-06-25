@@ -14,30 +14,13 @@ window.addEventListener('load', function () {
   function init () {
     // Find the canvas element.
     canvaso = document.getElementById('imageView');
-    if (!canvaso) {
-      alert('Error: I cannot find the canvas element!');
-      return;
-    }
-
-    if (!canvaso.getContext) {
-      alert('Error: no canvas.getContext!');
-      return;
-    }
 
     // Get the 2D canvas context.
     contexto = canvaso.getContext('2d');
-    if (!contexto) {
-      alert('Error: failed to getContext!');
-      return;
-    }
 
     // Add the temporary canvas.
     var container = canvaso.parentNode;
     canvas = document.createElement('canvas');
-    if (!canvas) {
-      alert('Error: I cannot create a new canvas element!');
-      return;
-    }
 
     canvas.id     = 'imageTemp';
     canvas.width  = canvaso.width;
@@ -48,16 +31,21 @@ window.addEventListener('load', function () {
 
     // Get the tool select input.
     var tool_select = document.getElementById('dtool');
-    if (!tool_select) {
-      alert('Error: failed to get the dtool element!');
-      return;
-    }
     tool_select.addEventListener('change', ev_tool_change, false);
 
     // Activate the default tool.
     if (tools[tool_default]) {
       tool = new tools[tool_default]();
       tool_select.value = tool_default;
+    }
+
+    //work with the lines button
+    var coords_select = document.getElementById('button');
+    coords_select.addEventListener('click', clickCoords, false);
+
+    function clickCoords(ev) {
+      sessionStorage.objects = JSON.stringify(objects);
+      window.open("file:///Users/Angela/spe/lists.html"); //change to own directory
     }
 
     // Attach the mousedown, mousemove and mouseup event listeners.
@@ -102,16 +90,26 @@ window.addEventListener('load', function () {
   // This object holds the implementation of each drawing tool.
   var tools = {};
 
+  var objects = [];
 
   // The line tool.
   tools.line = function () {
     var tool = this;
     this.started = false;
 
+    var start_x = 0;
+    var start_y = 0;
+    var end_x = 0;
+    var end_y = 0;
+
     this.mousedown = function (ev) {
       tool.started = true;
       tool.x0 = ev._x;
       tool.y0 = ev._y;
+      //////save start coordinates
+      start_x = ev._x;
+      start_y = ev._y;
+      new_line.coords = [];
     };
 
     this.mousemove = function (ev) {
@@ -131,11 +129,144 @@ window.addEventListener('load', function () {
     this.mouseup = function (ev) {
       if (tool.started) {
         tool.mousemove(ev);
+        end_x = ev._x; //save end coords
+        end_y = ev._y; //save end coords
         tool.started = false;
         img_update();
+        //////append new line to list of lists
+        objects.push({type:"line", coords:[start_x, start_y, end_x, end_y]});
+      }
+    }
+  };
+
+    // The circle tool.
+  tools.circle = function () {
+    var tool = this;
+    this.started = false;
+
+    var delta_x, delta_y, radius;
+
+    this.mousedown = function (ev) {
+      tool.started = true;
+      tool.x0 = ev._x;
+      tool.y0 = ev._y;
+    };
+
+    this.mousemove = function (ev) {
+      if (!tool.started) {
+        return;
+      }
+
+      delta_x = tool.x0 - ev._x;
+      delta_y = tool.y0 - ev._y;
+      radius = Math.sqrt((delta_x)*(delta_x) + (delta_y)*(delta_y));
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      context.beginPath();
+      context.arc(tool.x0, tool.y0, radius, 0, 2 * Math.PI)
+      context.stroke();
+      context.closePath();
+    };
+
+    this.mouseup = function (ev) {
+      if (tool.started) {
+        tool.mousemove(ev);
+        tool.started = false;
+        img_update();
+        ///add circle
+        objects.push({type:"circle", coords:[tool.x0, tool.y0, radius]});
       }
     };
   };
+
+  tools.circle2 = function () {
+    var tool = this;
+    this.started = false;
+
+    var delta_x, delta_y, radius;
+
+    this.mousedown = function (ev) {
+      tool.started = true;
+      tool.x0 = ev._x;
+      tool.y0 = ev._y;
+    };
+
+    this.mousemove = function (ev) {
+      if (!tool.started) {
+        return;
+      }
+
+      delta_x = tool.x0 - ev._x;
+      delta_y = tool.y0 - ev._y;
+      radius = Math.sqrt((delta_x)*(delta_x) + (delta_y)*(delta_y));
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      context.beginPath();
+      context.arc(tool.x0 - delta_x*0.5, tool.y0 - delta_y*0.5, (radius * 0.5), 0, 2 * Math.PI)
+      context.stroke();
+      context.closePath();
+    };
+
+    this.mouseup = function (ev) {
+      if (tool.started) {
+        tool.mousemove(ev);
+        tool.started = false;
+        img_update();
+        //add circle to list of circles
+        objects.push({type:"circle", coords:[tool.x0 - delta_x*0.5, tool.y0 - delta_y*0.5, (radius * 0.5)]});
+      }
+    };
+  };
+
+  //stamp type
+  tools.stamp = function () {
+    var tool = this;
+    this.started = false;
+
+    var delta_x, delta_y, radius;
+
+    this.mousedown = function (ev) {
+      tool.started = true;
+      tool.x0 = ev._x;
+      tool.y0 = ev._y;
+    };
+
+    this.mousemove = function (ev) {
+      if (!tool.started) {
+        return;
+      }
+
+      delta_x = tool.x0 - ev._x;
+      delta_y = tool.y0 - ev._y;
+      radius = Math.sqrt((delta_x)*(delta_x) + (delta_y)*(delta_y));
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      context.beginPath();
+      context.arc(tool.x0, tool.y0, 5, 0, 2 * Math.PI)
+      context.fillStyle = 'black';
+      context.fill();
+      context.stroke();
+      context.closePath();
+    };
+
+    this.mouseup = function (ev) {
+      if (tool.started) {
+        tool.mousemove(ev);
+        tool.started = false;
+        img_update();
+        objects.push({type:"stamp", coords:[tool.x0, tool.y0]});
+      }
+    };
+  };
+
+//rectangle tool
+
+
+
+//triangle tool
 
   init();
 
