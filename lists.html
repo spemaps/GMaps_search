@@ -25,14 +25,14 @@
             document.write("Stamp: [" + stamp[0] + ", " + stamp[1] + "] <br />");
         }
 
-        else if (objects[i] == "rectangle") {
+        else if (objects[i].type == "rectangle") {
             var rectangle = objects[i].coords;
-            document.write("Rectangle : [" + rectangle[0] + ", " + rectangle[1] + "] to [" + rectangle[2] + ", " + rectangle[3] + "]" + "<br />");
+            document.write("Rectangle: [" + rectangle[0] + ", " + rectangle[1] + "] to [" + rectangle[2] + ", " + rectangle[3] + "]" + "<br />");
         }
 
-        else if (objects[i] = "triangle") {
-          var triangle = object[i].coords;
-          document.write("Triangle: " + (i + 1) + ": [" + triangle[0] + ", " + triangle[1] + "], [" + triangle[2] + ", " + triangle[3] + "], [" + triangle[4] + ", " + triangle[5] + "] <br />");
+        else if (objects[i].type == "triangle") {
+          var triangle = objects[i].coords;
+          document.write("Triangle: [" + triangle[0] + ", " + triangle[1] + "], [" + triangle[2] + ", " + triangle[3] + "], [" + triangle[4] + ", " + triangle[5] + "] <br />");
         }
       }; 
 
