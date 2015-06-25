@@ -274,6 +274,7 @@ window.addEventListener('load', function () {
       tool.started = true;
       tool.x0 = ev._x;
       tool.y0 = ev._y;
+    };
 
     this.mousemove = function (ev) {
       if (!tool.started) {
@@ -325,21 +326,20 @@ window.addEventListener('load', function () {
 //triangle tool
 // The right triangle tool.
   tools.rt_tri = function() {
-  	var tool = this;
-  	this.started = false;
-  	
-  	var start_x = 0;
+    var tool = this;
+    this.started = false;
+    
+    var start_x = 0;
     var start_y = 0;
     var end_x = 0;
     var end_y = 0;
-  	
-  	
-  	this.mousedown = function (ev) {
+    
+    this.mousedown = function (ev) {
       tool.started = true;
       tool.x0 = ev._x;
       tool.y0 = ev._y;
       //////save start coordinates
-  	  start_x = ev._x;
+      start_x = ev._x;
       start_y = ev._y;
     };
     
@@ -373,9 +373,7 @@ window.addEventListener('load', function () {
   
   };
 
+
   init();
 
 }, false); }
-
-// vim:set spell spl=en fo=wan1croql tw=80 ts=2 sw=2 sts=2 sta et ai cin fenc=utf-8 ff=unix:
-
