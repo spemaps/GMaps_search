@@ -263,7 +263,63 @@ window.addEventListener('load', function () {
   };
 
 //rectangle tool
+  tools.rectangle = function () {
+    var tool = this;
+    this.started = false;
 
+    var end_x = 0;
+    var end_y = 0;
+
+    this.mousedown = function (ev) {
+      tool.started = true;
+      tool.x0 = ev._x;
+      tool.y0 = ev._y;
+
+    this.mousemove = function (ev) {
+      if (!tool.started) {
+        return;
+      }
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      //first line- horizontal line from start point
+      context.beginPath();
+      context.moveTo(tool.x0, tool.y0);
+      context.lineTo(ev._x,   tool.y0);
+      context.stroke();
+      context.closePath();
+      //second line- vertical line to end point     
+      context.beginPath();
+      context.moveTo(ev._x, tool.y0);
+      context.lineTo(ev._x,   ev._y);
+      context.stroke();
+      context.closePath();
+      //third line- horizontal line from end point
+      context.beginPath();
+      context.moveTo(ev._x, ev._y);
+      context.lineTo(tool.x0,   ev._y);
+      context.stroke();
+      context.closePath();
+      //fourth line- vertical line to start point
+      context.beginPath();
+      context.moveTo(tool.x0, ev._y);
+      context.lineTo(tool.x0,   tool.y0);
+      context.stroke();
+      context.closePath();
+
+    };
+
+    this.mouseup = function (ev) {
+      if (tool.started) {
+        tool.mousemove(ev);
+        end_x = ev._x; //save end coords
+        end_y = ev._y; //save end coords
+        tool.started = false;
+        img_update();
+        //append new rect coord to list of lists of rect
+        objects.push({type:"rectangle", coords:[tool.x0, tool.y0, ev._x, ev._y]});
+      }
+    };
+  };
 
 
 //triangle tool
