@@ -323,6 +323,55 @@ window.addEventListener('load', function () {
 
 
 //triangle tool
+// The right triangle tool.
+  tools.rt_tri = function() {
+  	var tool = this;
+  	this.started = false;
+  	
+  	var start_x = 0;
+    var start_y = 0;
+    var end_x = 0;
+    var end_y = 0;
+  	
+  	
+  	this.mousedown = function (ev) {
+      tool.started = true;
+      tool.x0 = ev._x;
+      tool.y0 = ev._y;
+      //////save start coordinates
+  	  start_x = ev._x;
+      start_y = ev._y;
+    };
+    
+    this.mousemove = function (ev) {
+      if (!tool.started) {
+        return;
+      }
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      context.beginPath();
+      context.moveTo(tool.x0, tool.y0);
+      context.lineTo(ev._x,   ev._y);
+      context.lineTo(start_x,   ev._y);
+      context.lineTo(start_x,   start_y);
+     
+      context.stroke();
+      context.closePath();
+    };
+    
+     this.mouseup = function (ev) {
+      if (tool.started) {
+        tool.mousemove(ev);
+        end_x = ev._x; //save end coords
+        end_y= ev._y; //save end coords
+        tool.started = false;
+        img_update();
+        //////append new line to list of lists
+        objects.push({type:"triangle", coords:[start_x, start_y, start_x, end_y, end_x, start_y]});
+      }
+    };
+  
+  };
 
   init();
 
